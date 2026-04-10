@@ -3,7 +3,7 @@
 import type { LoanCar } from "@/lib/types";
 
 interface CarCardProps {
-  car: LoanCar;
+  car: LoanCar & { hirerName?: string | null };
   selected: boolean;
   onSelect: (carId: number) => void;
 }
@@ -24,6 +24,9 @@ export default function CarCard({ car, selected, onSelect }: CarCardProps) {
       )}
       {car.plateNumber && (
         <span className="car-card__plate">{car.plateNumber}</span>
+      )}
+      {car.hirerName && (
+        <span className="car-card__hirer">{car.hirerName}</span>
       )}
     </button>
   );

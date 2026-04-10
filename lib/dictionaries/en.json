@@ -12,7 +12,7 @@
     "title": "Your Details",
     "customerName": "Customer Name",
     "phoneNumber": "Phone Number",
-    "plateNumber": "Plate Number",
+    "plateNumber": "Customer's Plate Number",
     "customerNamePlaceholder": "Enter your full name",
     "phoneNumberPlaceholder": "04XX XXX XXX",
     "plateNumberPlaceholder": "Enter your car plate number"
@@ -45,7 +45,8 @@
     "successMessage": "Successfully Registered",
     "carModel": "Car",
     "thankYou": "Thank you for using FlexTyres loan car service.",
-    "done": "Done"
+    "done": "Done",
+    "genericError": "Something went wrong. Please try again."
   },
   "navigation": {
     "back": "Back",

@@ -1,27 +1,25 @@
 "use server";
 
-import { sql } from "@vercel/postgres";
+import { getClient } from "@/lib/db";
 import {
   getLogs as dbGetLogs,
-  getLogById,
   createLog,
   updateLog,
-  deleteLog,
 } from "@/lib/db";
+import { createClient } from "@supabase/supabase-js";
 import type { LogEntry, ManualLogInput } from "@/lib/types";
 
-/**
- * Returns all log entries sorted by created_at DESC.
- * Delegates to db.ts getLogs() which already applies the sort.
- */
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
+
 export async function getLogs(): Promise<LogEntry[]> {
   return dbGetLogs();
 }
 
-/**
- * Updates an existing log entry with partial data.
- * Maps camelCase LogEntry fields to the db helper format.
- */
 export async function updateLogEntry(
   logId: number,
   data: Partial<LogEntry>
@@ -38,51 +36,53 @@ export async function updateLogEntry(
   await updateLog(logId, updateData);
 }
 
-/**
- * Deletes a log entry. If the entry has action "pickup", sets the
- * corresponding car's status back to "available" atomically.
- * Requirement 10.5: Pickup log deletion frees car.
- */
 export async function deleteLogEntry(logId: number): Promise<void> {
-  await sql`BEGIN`;
+  const client = await getClient();
   try {
-    // Fetch the log entry to check its action
-    const { rows } = await sql`
-      SELECT action, loan_car_id FROM logs WHERE id = ${logId} FOR UPDATE
-    `;
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      "SELECT action, loan_car_id, license_photo_url FROM logs WHERE id = $1 FOR UPDATE",
+      [logId]
+    );
 
     if (rows.length === 0) {
-      await sql`ROLLBACK`;
+      await client.query("ROLLBACK");
       throw new Error(`Log entry with id ${logId} not found`);
     }
 
     const logAction = rows[0].action as string;
     const loanCarId = rows[0].loan_car_id as number;
+    const photoUrl = rows[0].license_photo_url as string | null;
 
-    // If this was a pickup, free the car
     if (logAction === "pickup") {
-      await sql`
-        UPDATE loan_cars SET status = 'available' WHERE id = ${loanCarId}
-      `;
+      await client.query("UPDATE loan_cars SET status = 'available' WHERE id = $1", [loanCarId]);
     }
 
-    // Delete the log entry
-    await sql`DELETE FROM logs WHERE id = ${logId}`;
+    await client.query("DELETE FROM logs WHERE id = $1", [logId]);
 
-    await sql`COMMIT`;
+    await client.query("COMMIT");
+
+    // Delete the photo from Supabase Storage after successful DB delete
+    if (photoUrl) {
+      const match = photoUrl.match(/[?&]path=([^&]+)/);
+      if (match) {
+        const path = decodeURIComponent(match[1]);
+        const supabase = getSupabase();
+        if (supabase) {
+          await supabase.storage.from("license-photos").remove([path]);
+        }
+      }
+    }
   } catch (error) {
-    await sql`ROLLBACK`;
+    await client.query("ROLLBACK");
     throw error;
+  } finally {
+    client.release();
   }
 }
 
-/**
- * Creates a manual log entry with is_manual set to true.
- * Requirement 10.4: Admin manual entry creation.
- */
-export async function createManualLogEntry(
-  data: ManualLogInput
-): Promise<void> {
+export async function createManualLogEntry(data: ManualLogInput): Promise<void> {
   await createLog({
     action: data.action,
     customerName: data.customerName,

@@ -16,12 +16,25 @@ export default function Home() {
 
   function handleAction(action: "pickup" | "dropoff") {
     updateSession({ action });
-    router.push("/wizard/identity");
+    if (action === "dropoff") {
+      router.push("/wizard/car-selection");
+    } else {
+      router.push("/wizard/identity");
+    }
   }
 
   return (
     <main className="landing-page">
-      <h1>{dict.step0.title}</h1>
+      <div className="landing-header">
+        <h1>{dict.step0.title}</h1>
+        <button
+          type="button"
+          className="landing-admin-btn"
+          onClick={() => router.push("/admin")}
+        >
+          Admin
+        </button>
+      </div>
 
       <section className="landing-section" aria-label={dict.step0.selectLanguage}>
         <h2>{dict.step0.selectLanguage}</h2>

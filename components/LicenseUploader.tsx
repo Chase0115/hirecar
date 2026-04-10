@@ -17,6 +17,31 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
+  function compressImage(file: File, maxWidth = 1200, quality = 0.7): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { resolve(file); return; }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) { resolve(file); return; }
+            resolve(new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
   async function handleFile(file: File) {
     const validation = validateFileUpload({ type: file.type, size: file.size });
     if (!validation.valid) {
@@ -25,12 +50,14 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
     }
 
     setError(null);
-    setPreview(URL.createObjectURL(file));
     setUploading(true);
 
     try {
+      const compressed = await compressImage(file);
+      setPreview(URL.createObjectURL(compressed));
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed);
 
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();

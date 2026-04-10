@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWizard } from "@/lib/wizard-context";
 import { getDictionary } from "@/lib/i18n";
@@ -22,9 +22,11 @@ export default function ConfirmationPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState("");
   const [car, setCar] = useState<LoanCar | null>(null);
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
+    if (hasRun.current) return;
+    hasRun.current = true;
 
     async function complete() {
       if (!session.selectedCarId) {
@@ -36,7 +38,7 @@ export default function ConfirmationPage() {
       // Fetch car details for display
       try {
         const carData = await getCarByIdAction(session.selectedCarId);
-        if (!cancelled && carData) {
+        if (carData) {
           setCar(carData);
         }
       } catch {
@@ -57,21 +59,19 @@ export default function ConfirmationPage() {
             loanCarId: session.selectedCarId,
           });
 
-      if (cancelled) return;
-
       if (result.success) {
         setStatus("success");
       } else {
+        if (result.error === "Car is not available" || result.error === "Car is not currently in use") {
+          router.push("/wizard/car-selection");
+          return;
+        }
         setStatus("error");
-        setErrorMessage(result.error ?? "An unexpected error occurred.");
+        setErrorMessage(dict.step5.genericError ?? "Something went wrong. Please try again.");
       }
     }
 
     complete();
-
-    return () => {
-      cancelled = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

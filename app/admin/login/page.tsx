@@ -68,6 +68,13 @@ export default function AdminLoginPage() {
         >
           {loading ? "Logging in…" : "Log In"}
         </button>
+        <button
+          type="button"
+          className="big-button big-button--secondary"
+          onClick={() => router.push("/")}
+        >
+          Back to Home
+        </button>
       </form>
     </div>
   );

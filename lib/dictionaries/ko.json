@@ -12,7 +12,7 @@
     "title": "고객 정보",
     "customerName": "고객 이름",
     "phoneNumber": "전화번호",
-    "plateNumber": "차량 번호판",
+    "plateNumber": "고객 차량 번호판",
     "customerNamePlaceholder": "이름을 입력하세요",
     "phoneNumberPlaceholder": "04XX XXX XXX",
     "plateNumberPlaceholder": "차량 번호판을 입력하세요"
@@ -45,7 +45,8 @@
     "successMessage": "등록이 완료되었습니다",
     "carModel": "차량",
     "thankYou": "FlexTyres 대여 차량 서비스를 이용해 주셔서 감사합니다.",
-    "done": "완료"
+    "done": "완료",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "navigation": {
     "back": "뒤로",

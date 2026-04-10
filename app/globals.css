@@ -686,3 +686,78 @@ label {
 .manual-entry-form .big-button {
   align-self: flex-start;
 }
+
+/* ===== Landing Header ===== */
+.landing-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+.landing-admin-btn {
+  position: absolute;
+  right: 0;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-disabled);
+  cursor: pointer;
+}
+
+.landing-admin-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+/* ===== License Uploader ===== */
+.license-uploader__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.license-uploader__buttons .big-button {
+  width: 100%;
+}
+
+.license-nav {
+  margin-top: 32px;
+}
+
+/* ===== Car Manager Edit ===== */
+.car-manager__edit-cell {
+  padding: 12px;
+}
+
+.car-manager__edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.car-manager__edit-form .form-field {
+  flex: 1;
+  min-width: 120px;
+}
+
+.car-manager__edit-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ===== Car Card Hirer ===== */
+.car-card__hirer {
+  font-size: 14px;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 4px;
+}
