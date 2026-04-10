@@ -3,6 +3,8 @@ import { getAllCarsAction } from "@/actions/cars";
 import LogTable from "@/components/LogTable";
 import CarManager from "@/components/CarManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const [logs, cars] = await Promise.all([getLogs(), getAllCarsAction()]);
 

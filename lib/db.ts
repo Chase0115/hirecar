@@ -3,7 +3,7 @@ import type { LoanCar, LogEntry } from "./types";
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: process.env.POSTGRES_URL ? { rejectUnauthorized: false } : false,
+  ssl: { rejectUnauthorized: false },
 });
 
 export async function query(text: string, params?: unknown[]) {
