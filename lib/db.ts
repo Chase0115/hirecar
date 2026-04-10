@@ -1,8 +1,18 @@
 import { Pool } from "pg";
 import type { LoanCar, LogEntry } from "./types";
 
+function getConnectionString() {
+  const url = process.env.POSTGRES_URL || "";
+  // Ensure libpq compat mode for Supabase pooler
+  if (url && !url.includes("uselibpqcompat")) {
+    const separator = url.includes("?") ? "&" : "?";
+    return url + separator + "uselibpqcompat=true";
+  }
+  return url;
+}
+
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: getConnectionString(),
   ssl: { rejectUnauthorized: false },
 });
 
