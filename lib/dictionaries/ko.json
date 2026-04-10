@@ -1,0 +1,64 @@
+{
+  "step0": {
+    "title": "FlexTyres에 오신 것을 환영합니다",
+    "selectLanguage": "언어 선택",
+    "english": "English",
+    "korean": "한국어",
+    "selectAction": "무엇을 하시겠습니까?",
+    "pickUp": "차량 수령",
+    "dropOff": "차량 반납"
+  },
+  "step1": {
+    "title": "고객 정보",
+    "customerName": "고객 이름",
+    "phoneNumber": "전화번호",
+    "plateNumber": "차량 번호판",
+    "customerNamePlaceholder": "이름을 입력하세요",
+    "phoneNumberPlaceholder": "04XX XXX XXX",
+    "plateNumberPlaceholder": "차량 번호판을 입력하세요"
+  },
+  "step2": {
+    "title": "운전면허증",
+    "takePhoto": "사진 촬영",
+    "uploadImage": "이미지 업로드",
+    "uploadSuccess": "면허증 사진이 업로드되었습니다",
+    "uploadFailed": "업로드에 실패했습니다. 다시 시도해 주세요.",
+    "cameraAccessDenied": "카메라 접근이 거부되었습니다. 이미지 업로드 옵션을 사용해 주세요.",
+    "invalidFileType": "잘못된 파일 형식입니다. JPEG 또는 PNG 이미지를 업로드해 주세요.",
+    "fileTooLarge": "파일이 너무 큽니다. 최대 크기는 10 MB입니다.",
+    "retryUpload": "다시 업로드"
+  },
+  "step3": {
+    "title": "차량 선택",
+    "noCarsAvailable": "현재 이용 가능한 차량이 없습니다.",
+    "selectCar": "계속하려면 차량을 선택하세요."
+  },
+  "step4": {
+    "title": "이용 약관",
+    "etoll": "대여 기간 동안 E-Toll 요금이 대여 차량으로 이전되는 것에 동의합니다.",
+    "fines": "대여 차량 사용 중 발생하는 벌금에 대한 책임을 수락합니다.",
+    "accident": "대여 차량 사용 중 발생하는 사고 수리 비용에 대한 책임을 수락합니다.",
+    "agreeAll": "모든 약관에 동의합니다"
+  },
+  "step5": {
+    "title": "확인",
+    "successMessage": "등록이 완료되었습니다",
+    "carModel": "차량",
+    "thankYou": "FlexTyres 대여 차량 서비스를 이용해 주셔서 감사합니다.",
+    "done": "완료"
+  },
+  "navigation": {
+    "back": "뒤로",
+    "next": "다음",
+    "stepIndicator": "{{total}}단계 중 {{current}}단계"
+  },
+  "validation": {
+    "required": "이 필드는 필수입니다.",
+    "customerNameRequired": "고객 이름을 입력해 주세요.",
+    "phoneNumberRequired": "전화번호를 입력해 주세요.",
+    "plateNumberRequired": "차량 번호판을 입력해 주세요.",
+    "invalidPhoneFormat": "유효한 호주 전화번호를 입력해 주세요 (예: 04XX XXX XXX).",
+    "invalidFileType": "JPEG 및 PNG 파일만 허용됩니다.",
+    "fileTooLarge": "파일 크기는 10 MB 이하여야 합니다."
+  }
+}

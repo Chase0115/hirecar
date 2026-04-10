@@ -1,0 +1,64 @@
+{
+  "step0": {
+    "title": "Welcome to FlexTyres",
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "korean": "한국어",
+    "selectAction": "What would you like to do?",
+    "pickUp": "PICK UP",
+    "dropOff": "DROP OFF"
+  },
+  "step1": {
+    "title": "Your Details",
+    "customerName": "Customer Name",
+    "phoneNumber": "Phone Number",
+    "plateNumber": "Plate Number",
+    "customerNamePlaceholder": "Enter your full name",
+    "phoneNumberPlaceholder": "04XX XXX XXX",
+    "plateNumberPlaceholder": "Enter your car plate number"
+  },
+  "step2": {
+    "title": "Driver License",
+    "takePhoto": "Take a Photo",
+    "uploadImage": "Upload Image",
+    "uploadSuccess": "License photo uploaded successfully",
+    "uploadFailed": "Upload failed. Please try again.",
+    "cameraAccessDenied": "Camera access denied. Please use the Upload Image option instead.",
+    "invalidFileType": "Invalid file type. Please upload a JPEG or PNG image.",
+    "fileTooLarge": "File is too large. Maximum size is 10 MB.",
+    "retryUpload": "Retry Upload"
+  },
+  "step3": {
+    "title": "Select a Car",
+    "noCarsAvailable": "No cars are currently available.",
+    "selectCar": "Please select a car to continue."
+  },
+  "step4": {
+    "title": "Terms and Conditions",
+    "etoll": "I agree to the transfer of E-Toll charges to the hire car during the loan period.",
+    "fines": "I accept liability for any fines incurred while using the loan car.",
+    "accident": "I accept liability for accident repair costs while using the loan car.",
+    "agreeAll": "I agree to all terms"
+  },
+  "step5": {
+    "title": "Confirmation",
+    "successMessage": "Successfully Registered",
+    "carModel": "Car",
+    "thankYou": "Thank you for using FlexTyres loan car service.",
+    "done": "Done"
+  },
+  "navigation": {
+    "back": "Back",
+    "next": "Next",
+    "stepIndicator": "Step {{current}} of {{total}}"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "customerNameRequired": "Customer name is required.",
+    "phoneNumberRequired": "Phone number is required.",
+    "plateNumberRequired": "Plate number is required.",
+    "invalidPhoneFormat": "Please enter a valid Australian phone number (e.g. 04XX XXX XXX).",
+    "invalidFileType": "Only JPEG and PNG files are accepted.",
+    "fileTooLarge": "File must be 10 MB or smaller."
+  }
+}
