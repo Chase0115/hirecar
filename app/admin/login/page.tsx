@@ -19,7 +19,8 @@ export default function AdminLoginPage() {
     try {
       const result = await adminLogin(username, password);
       if (result.success) {
-        router.push("/admin");
+        window.location.href = "/admin";
+        return;
       } else {
         setError(result.error || "Invalid credentials");
       }
