@@ -30,6 +30,11 @@ describe("Admin Login Page", () => {
 
   it("redirects to /admin on successful login", async () => {
     mockAdminLogin.mockResolvedValue({ success: true });
+    const originalLocation = window.location;
+    // @ts-expect-error -- jsdom allows deleting location for testing
+    delete (window as { location?: Location }).location;
+    window.location = { ...originalLocation, href: "" } as Location;
+
     render(<AdminLoginPage />);
 
     fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
@@ -37,9 +42,11 @@ describe("Admin Login Page", () => {
     fireEvent.click(screen.getByRole("button", { name: "Log In" }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/admin");
+      expect(window.location.href).toBe("/admin");
     });
     expect(mockAdminLogin).toHaveBeenCalledWith("admin", "secret");
+
+    window.location = originalLocation;
   });
 
   it("shows error message on invalid credentials", async () => {
@@ -75,6 +82,11 @@ describe("Admin Login Page", () => {
     mockAdminLogin.mockReturnValue(
       new Promise((resolve) => { resolveLogin = resolve; })
     );
+    const originalLocation = window.location;
+    // @ts-expect-error -- jsdom allows deleting location for testing
+    delete (window as { location?: Location }).location;
+    window.location = { ...originalLocation, href: "" } as Location;
+
     render(<AdminLoginPage />);
 
     fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
@@ -85,8 +97,10 @@ describe("Admin Login Page", () => {
 
     resolveLogin!({ success: true });
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/admin");
+      expect(window.location.href).toBe("/admin");
     });
+
+    window.location = originalLocation;
   });
 
   it("does not show error initially", () => {

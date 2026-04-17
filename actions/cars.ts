@@ -42,6 +42,12 @@ export async function toggleCarStatus(carId: number): Promise<LoanCar> {
     }
 
     const currentStatus = rows[0].status as LoanCar["status"];
+
+    if (currentStatus === "maintenance") {
+      await client.query("ROLLBACK");
+      throw new Error("Cannot toggle a car in maintenance. Set it to available first.");
+    }
+
     const newStatus: LoanCar["status"] = currentStatus === "available" ? "in_use" : "available";
 
     const { rows: updatedRows } = await client.query(
@@ -67,6 +73,74 @@ export async function toggleCarStatus(carId: number): Promise<LoanCar> {
     client.release();
   }
 }
+
+export async function setCarMaintenance(carId: number, maintenance: boolean): Promise<LoanCar> {
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      "SELECT * FROM loan_cars WHERE id = $1 FOR UPDATE",
+      [carId]
+    );
+
+    if (rows.length === 0) {
+      await client.query("ROLLBACK");
+      throw new Error(`Car with id ${carId} not found`);
+    }
+
+    const currentStatus = rows[0].status as LoanCar["status"];
+
+    if (maintenance) {
+      if (currentStatus === "in_use") {
+        await client.query("ROLLBACK");
+        throw new Error("Cannot set an in-use car to maintenance. Return the car first.");
+      }
+      if (currentStatus === "maintenance") {
+        await client.query("COMMIT");
+        const row = rows[0];
+        return {
+          id: row.id as number,
+          make: row.make as string,
+          model: row.model as string,
+          colour: (row.colour as string) ?? null,
+          plateNumber: (row.plate_number as string) ?? null,
+          status: row.status as LoanCar["status"],
+        };
+      }
+    } else {
+      if (currentStatus !== "maintenance") {
+        await client.query("ROLLBACK");
+        throw new Error("Car is not in maintenance status.");
+      }
+    }
+
+    const newStatus: LoanCar["status"] = maintenance ? "maintenance" : "available";
+
+    const { rows: updatedRows } = await client.query(
+      "UPDATE loan_cars SET status = $1 WHERE id = $2 RETURNING *",
+      [newStatus, carId]
+    );
+
+    await client.query("COMMIT");
+
+    const row = updatedRows[0];
+    return {
+      id: row.id as number,
+      make: row.make as string,
+      model: row.model as string,
+      colour: (row.colour as string) ?? null,
+      plateNumber: (row.plate_number as string) ?? null,
+      status: row.status as LoanCar["status"],
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 
 export async function addCar(data: {
   make: string;

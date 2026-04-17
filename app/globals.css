@@ -585,6 +585,11 @@ label {
   color: #e65100;
 }
 
+.car-manager__status--maintenance {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
 .car-manager__toggle {
   padding: 8px 16px;
   font-size: 14px;

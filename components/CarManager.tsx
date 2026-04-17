@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toggleCarStatus, addCar, deleteCar, updateCar } from "@/actions/cars";
+import { toggleCarStatus, addCar, deleteCar, updateCar, setCarMaintenance } from "@/actions/cars";
 import type { LoanCar } from "@/lib/types";
 
 interface CarManagerProps {
   cars: LoanCar[];
+  onUpdate?: () => void;
 }
 
-export default function CarManager({ cars }: CarManagerProps) {
+export default function CarManager({ cars, onUpdate }: CarManagerProps) {
   const router = useRouter();
   const [togglingId, setTogglingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -22,15 +23,22 @@ export default function CarManager({ cars }: CarManagerProps) {
 
   async function handleToggle(carId: number) {
     setTogglingId(carId);
-    try { await toggleCarStatus(carId); router.refresh(); }
+    try { await toggleCarStatus(carId); router.refresh(); onUpdate?.(); }
     catch { alert("Failed to toggle car status."); }
+    finally { setTogglingId(null); }
+  }
+
+  async function handleSetMaintenance(carId: number, maintenance: boolean) {
+    setTogglingId(carId);
+    try { await setCarMaintenance(carId, maintenance); router.refresh(); onUpdate?.(); }
+    catch { alert("Failed to update maintenance status."); }
     finally { setTogglingId(null); }
   }
 
   async function handleDelete(carId: number) {
     if (!confirm("Delete this car? All related log entries will also be removed.")) return;
     setDeletingId(carId);
-    try { await deleteCar(carId); router.refresh(); }
+    try { await deleteCar(carId); router.refresh(); onUpdate?.(); }
     catch { alert("Failed to delete car."); }
     finally { setDeletingId(null); }
   }
@@ -52,6 +60,7 @@ export default function CarManager({ cars }: CarManagerProps) {
       });
       setEditingId(null);
       router.refresh();
+      onUpdate?.();
     } catch { alert("Failed to update car."); }
     finally { setSaving(false); }
   }
@@ -65,6 +74,7 @@ export default function CarManager({ cars }: CarManagerProps) {
       setNewCar({ make: "", model: "", colour: "", plateNumber: "" });
       setShowAddForm(false);
       router.refresh();
+      onUpdate?.();
     } catch { alert("Failed to add car."); }
     finally { setAdding(false); }
   }
@@ -114,10 +124,21 @@ export default function CarManager({ cars }: CarManagerProps) {
                 <>
                   <td>{car.make} {car.model}{car.colour ? ` (${car.colour})` : ""}</td>
                   <td>{car.plateNumber ?? "—"}</td>
-                  <td><span className={`car-manager__status car-manager__status--${car.status}`}>{car.status === "available" ? "Available" : "In Use"}</span></td>
+                  <td><span className={`car-manager__status car-manager__status--${car.status}`}>{car.status === "available" ? "Available" : car.status === "maintenance" ? "Maintenance" : "In Use"}</span></td>
                   <td className="car-manager__actions">
                     <button type="button" className="log-table__btn log-table__btn--edit" onClick={() => startEdit(car)} aria-label={`Edit ${car.make} ${car.model}`}>Edit</button>
-                    <button type="button" className="big-button big-button--secondary car-manager__toggle" onClick={() => handleToggle(car.id)} disabled={togglingId === car.id}>{togglingId === car.id ? "…" : car.status === "available" ? "Set In Use" : "Set Available"}</button>
+                    {car.status === "available" && (
+                      <>
+                        <button type="button" className="big-button big-button--secondary car-manager__toggle" onClick={() => handleToggle(car.id)} disabled={togglingId === car.id}>{togglingId === car.id ? "…" : "Set In Use"}</button>
+                        <button type="button" className="big-button big-button--secondary car-manager__toggle" onClick={() => handleSetMaintenance(car.id, true)} disabled={togglingId === car.id}>{togglingId === car.id ? "…" : "Set Maintenance"}</button>
+                      </>
+                    )}
+                    {car.status === "in_use" && (
+                      <button type="button" className="big-button big-button--secondary car-manager__toggle" onClick={() => handleToggle(car.id)} disabled={togglingId === car.id}>{togglingId === car.id ? "…" : "Set Available"}</button>
+                    )}
+                    {car.status === "maintenance" && (
+                      <button type="button" className="big-button big-button--secondary car-manager__toggle" onClick={() => handleSetMaintenance(car.id, false)} disabled={togglingId === car.id}>{togglingId === car.id ? "…" : "Set Available"}</button>
+                    )}
                     <button type="button" className="log-table__btn log-table__btn--delete" onClick={() => handleDelete(car.id)} disabled={deletingId === car.id} aria-label={`Delete ${car.make} ${car.model}`}>{deletingId === car.id ? "…" : "Delete"}</button>
                   </td>
                 </>

@@ -13,6 +13,16 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  async function refetchData() {
+    try {
+      const [logsData, carsData] = await Promise.all([getLogs(), getAllCarsAction()]);
+      setLogs(logsData);
+      setCars(carsData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load data");
+    }
+  }
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -35,7 +45,7 @@ export default function AdminDashboardPage() {
     <div className="admin-dashboard">
       <h2>Activity Log</h2>
       <LogTable logs={logs} cars={cars} />
-      <CarManager cars={cars} />
+      <CarManager cars={cars} onUpdate={refetchData} />
     </div>
   );
 }

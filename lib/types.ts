@@ -4,7 +4,7 @@ export interface LoanCar {
   model: string;
   colour: string | null;
   plateNumber: string | null;
-  status: "available" | "in_use";
+  status: "available" | "in_use" | "maintenance";
 }
 
 export interface LogEntry {
