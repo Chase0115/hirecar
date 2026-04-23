@@ -119,6 +119,11 @@ export default function LogTable({ logs, cars }: LogTableProps) {
     }
   }
 
+  function getCarLabel(loanCarId: number): string {
+    const car = cars.find((c) => c.id === loanCarId);
+    return car ? `${car.make} ${car.model}${car.plateNumber ? ` (${car.plateNumber})` : ""}` : "Unknown";
+  }
+
   return (
     <div className="log-table-wrapper">
       <div className="log-table-actions">
@@ -211,6 +216,7 @@ export default function LogTable({ logs, cars }: LogTableProps) {
             <tr>
               <th scope="col">Timestamp</th>
               <th scope="col">Action</th>
+              <th scope="col">Car</th>
               <th scope="col">Customer Name</th>
               <th scope="col">Phone Number</th>
               <th scope="col">Plate Number</th>
@@ -220,7 +226,7 @@ export default function LogTable({ logs, cars }: LogTableProps) {
           <tbody>
             {logs.map((log) => (
               <tr key={log.id} className="log-table__group">
-                <td colSpan={6} style={{ padding: 0, border: "none" }}>
+                <td colSpan={7} style={{ padding: 0, border: "none" }}>
                   {editingId === log.id ? (
                     <div className="log-table__edit-row">
                       <div className="log-table__edit-fields">
@@ -302,6 +308,7 @@ export default function LogTable({ logs, cars }: LogTableProps) {
                           {formatTimestamp(log.createdAt)}
                         </span>
                         <span className="log-table__cell" onClick={() => handleRowClick(log.id)}>{formatAction(log.action)}</span>
+                        <span className="log-table__cell" onClick={() => handleRowClick(log.id)}>{getCarLabel(log.loanCarId)}</span>
                         <span className="log-table__cell" onClick={() => handleRowClick(log.id)}>{log.customerName}</span>
                         <span className="log-table__cell" onClick={() => handleRowClick(log.id)}>{log.phoneNumber}</span>
                         <span className="log-table__cell" onClick={() => handleRowClick(log.id)}>{log.customerPlateNumber ?? "—"}</span>

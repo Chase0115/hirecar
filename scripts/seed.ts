@@ -27,7 +27,7 @@ async function seed() {
         colour VARCHAR(30),
         plate_number VARCHAR(20) UNIQUE,
         status VARCHAR(20) NOT NULL DEFAULT 'available'
-          CHECK (status IN ('available', 'in_use'))
+          CHECK (status IN ('available', 'in_use', 'maintenance'))
       )
     `);
 
