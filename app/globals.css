@@ -491,7 +491,7 @@ label {
 
 .log-table__row {
   display: grid;
-  grid-template-columns: 1.5fr 0.8fr 1fr 1fr 0.8fr;
+  grid-template-columns: 1.5fr 0.8fr 1fr 1fr 1fr 0.8fr;
   width: 100%;
   padding: 0;
   border: none;
@@ -520,6 +520,11 @@ label {
   padding: 10px;
   display: flex;
   align-items: center;
+}
+
+.log-table__row .log-table__cell:first-child {
+  margin: 0;
+  padding-left: 10px;
 }
 
 .log-table__detail {
@@ -602,7 +607,7 @@ label {
 }
 
 .log-table__row {
-  grid-template-columns: 1.5fr 0.8fr 1fr 1fr 0.8fr 0.8fr;
+  grid-template-columns: 1.5fr 0.8fr 1fr 1fr 1fr 0.8fr 0.8fr;
 }
 
 .log-table__controls {
