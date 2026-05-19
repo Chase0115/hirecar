@@ -15,12 +15,13 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
 
   function compressImage(file: File, maxWidth = 1200, quality = 0.7): Promise<File> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
       img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
         const scale = Math.min(1, maxWidth / img.width);
         const canvas = document.createElement("canvas");
         canvas.width = Math.round(img.width * scale);
@@ -37,8 +38,12 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
           quality
         );
       };
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = URL.createObjectURL(file);
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        // If compression fails, use the original file
+        resolve(file);
+      };
+      img.src = objectUrl;
     });
   }
 
@@ -54,7 +59,6 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
 
     try {
       const compressed = await compressImage(file);
-      setPreview(URL.createObjectURL(compressed));
 
       const formData = new FormData();
       formData.append("file", compressed);
@@ -68,10 +72,10 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
         return;
       }
 
+      // Navigate immediately — don't set uploading to false since we're leaving the page
       onUploadSuccess(data.url);
     } catch {
       setError(dict.step2.uploadFailed);
-    } finally {
       setUploading(false);
     }
   }
@@ -87,7 +91,6 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
 
   function handleRetry() {
     setError(null);
-    setPreview(null);
   }
 
   return (
@@ -111,17 +114,13 @@ export default function LicenseUploader({ dict, onUploadSuccess }: LicenseUpload
         aria-hidden="true"
       />
 
-      {preview && (
-        <div className="license-uploader__preview">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="License preview" className="license-uploader__image" />
-        </div>
-      )}
-
       {uploading && (
-        <p className="license-uploader__status" role="status" aria-live="polite">
-          Uploading…
-        </p>
+        <div className="license-uploader__loading">
+          <div className="license-uploader__spinner" aria-hidden="true" />
+          <p className="license-uploader__status" role="status" aria-live="polite">
+            Uploading…
+          </p>
+        </div>
       )}
 
       {error && (
